@@ -1,7 +1,11 @@
-package main
+package apiForProducts
 
 import (
 	"encoding/json"
+	"golang-crud-rest-api/databaseconnection"
+	"golang-crud-rest-api/productquerys"
+	"golang-crud-rest-api/products"
+	"golang-crud-rest-api/strconve"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -12,7 +16,7 @@ func SetupRoutesForProducts(router *mux.Router) {
 	EnableCORS(router)
 
 	router.HandleFunc("/product", func(w http.ResponseWriter, r *http.Request) {
-		product, err := GetProduct()
+		product, err := productquerys.GetProduct()
 		if err == nil {
 			RespondWithSuccess(product, w)
 
@@ -25,13 +29,13 @@ func SetupRoutesForProducts(router *mux.Router) {
 	//To get by id
 	router.HandleFunc("/product/{id}", func(w http.ResponseWriter, r *http.Request) {
 		idAsString := mux.Vars(r)["id"]
-		id, err := stringToInt64(idAsString)
+		id, err := strconve.StringToInt64(idAsString)
 
 		if err != nil {
 			RespondWithError(err, w)
 			return
 		}
-		product, err := GetProductById(id)
+		product, err := productquerys.GetProductById(id)
 
 		if err != nil {
 			RespondWithError(err, w)
@@ -44,12 +48,12 @@ func SetupRoutesForProducts(router *mux.Router) {
 	//To Create
 	router.HandleFunc("/product", func(w http.ResponseWriter, r *http.Request) {
 
-		var product Product
+		var product products.Product
 		err := json.NewDecoder(r.Body).Decode(&product)
 		if err != nil {
 			RespondWithError(err, w)
 		} else {
-			err := CreateProduct(product)
+			err := productquerys.CreateProduct(product)
 			if err != nil {
 				RespondWithError(err, w)
 			} else {
@@ -61,12 +65,12 @@ func SetupRoutesForProducts(router *mux.Router) {
 	//TO Update
 	router.HandleFunc("/product", func(w http.ResponseWriter, r *http.Request) {
 
-		var product Product
+		var product products.Product
 		err := json.NewDecoder(r.Body).Decode(&product)
 		if err != nil {
 			RespondWithError(err, w)
 		} else {
-			err := UpdateProduct(product)
+			err := productquerys.UpdateProduct(product)
 			if err != nil {
 				RespondWithError(err, w)
 			} else {
@@ -78,13 +82,13 @@ func SetupRoutesForProducts(router *mux.Router) {
 	//To DELETE
 	router.HandleFunc("/product/{id}", func(w http.ResponseWriter, r *http.Request) {
 		idAsString := mux.Vars(r)["id"]
-		id, err := stringToInt64(idAsString)
+		id, err := strconve.StringToInt64(idAsString)
 
 		if err != nil {
 			RespondWithError(err, w)
 			return
 		}
-		err = DeleteProduct(id)
+		err = productquerys.DeleteProduct(id)
 
 		if err != nil {
 			RespondWithError(err, w)
@@ -99,7 +103,7 @@ func SetupRoutesForProducts(router *mux.Router) {
 //To enable CORS
 func EnableCORS(router *mux.Router) {
 	router.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", AllowedCORSDomain)
+		w.Header().Set("Access-Control-Allow-Origin", databaseconnection.AllowedCORSDomain)
 	}).Methods(http.MethodOptions)
 	router.Use(MiddlewareCors)
 }
@@ -108,7 +112,7 @@ func MiddlewareCors(next http.Handler) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, req *http.Request) {
 			// Just put some headers to allow CORS...
-			w.Header().Set("Access-Control-Allow-Origin", AllowedCORSDomain)
+			w.Header().Set("Access-Control-Allow-Origin", databaseconnection.AllowedCORSDomain)
 			w.Header().Set("Access-Control-Allow-Credentials", "true")
 			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 			w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
