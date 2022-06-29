@@ -58,7 +58,7 @@ func SetupRoutesForCategories(router *mux.Router) {
 		}
 	}).Methods(http.MethodPost)
 
-	router.HandleFunc("/categories{id}", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/categories/{id}", func(w http.ResponseWriter, r *http.Request) {
 		idAsString := mux.Vars(r)["id"]
 		id, err := strconve.StringToInt64(idAsString)
 

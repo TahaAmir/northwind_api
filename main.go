@@ -1,6 +1,7 @@
 package main
 
 import (
+	"golang-crud-rest-api/api"
 	product_api "golang-crud-rest-api/api"
 	"golang-crud-rest-api/database"
 	"log"
@@ -30,6 +31,7 @@ func main() {
 
 	router := mux.NewRouter()
 	product_api.SetupRoutesForProducts(router)
+	api.SetupRoutesForCategories(router)
 
 	port := ":8000"
 

@@ -44,7 +44,7 @@ func GetCategoryById(id int64) (types.Catogories, error) {
 
 	var category types.Catogories
 
-	row := database.DB.QueryRow("SELECT CategoryID,CategoryName,Description,Picture WHERE CategoryID = ?", id)
+	row := database.DB.QueryRow("SELECT CategoryID,CategoryName,Description,Picture FROM categories WHERE CategoryID = ?", id)
 	err := row.Scan(&category.ID, &category.Name, &category.Description, &category.Picture)
 	if err != nil {
 		return category, err

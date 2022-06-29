@@ -6,7 +6,7 @@ import (
 )
 
 func CreateProduct(p products.Product) error {
-	_, err := database.DB.Exec("INSERT INTO products (  ProductName , SupplierID , CategoryID  ,QuantityPerUnit , UnitPrice , UnitsInStock ,UnitsOnOrder  ,ReorderLevel,Discontinued  ",
+	_, err := database.DB.Exec("INSERT INTO products (  ProductName , SupplierID , CategoryID  ,QuantityPerUnit , UnitPrice , UnitsInStock ,UnitsOnOrder  ,ReorderLevel,Discontinued) VALUES (?,?,?,?,?,?,?,?,?)  ",
 		p.Name, p.SupID, p.CatoID, p.QuantityPerUnit, p.Price, p.UnitsInStock, p.UnitsnOrder, p.ReorderLevel, p.Discontinued)
 	return err
 
