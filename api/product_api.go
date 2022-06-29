@@ -3,7 +3,7 @@ package product_api
 import (
 	"encoding/json"
 	"golang-crud-rest-api/database"
-	"golang-crud-rest-api/product_querys"
+	product_querys "golang-crud-rest-api/querys"
 	strconve "golang-crud-rest-api/string_conversion"
 	products "golang-crud-rest-api/types"
 	"net/http"
