@@ -1,11 +1,9 @@
-package product_querys
+package querys
 
 import (
 	"golang-crud-rest-api/database"
-	products "golang-crud-rest-api/types"
+	products "golang-crud-rest-api/type"
 )
-
-var product *products.Product
 
 func CreateProduct(p products.Product) error {
 	_, err := database.DB.Exec("INSERT INTO products (  ProductName , SupplierID , CategoryID  ,QuantityPerUnit , UnitPrice , UnitsInStock ,UnitsOnOrder  ,ReorderLevel,Discontinued  ",

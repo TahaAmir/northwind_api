@@ -1,4 +1,4 @@
-package products
+package types
 
 type Product struct {
 	ID              int64   `json:"ProductID"`

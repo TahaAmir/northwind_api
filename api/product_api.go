@@ -1,11 +1,11 @@
-package product_api
+package api
 
 import (
 	"encoding/json"
 	"golang-crud-rest-api/database"
 	product_querys "golang-crud-rest-api/querys"
 	strconve "golang-crud-rest-api/string_conversion"
-	products "golang-crud-rest-api/types"
+	products "golang-crud-rest-api/type"
 	"net/http"
 
 	"github.com/gorilla/mux"
