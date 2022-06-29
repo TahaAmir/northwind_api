@@ -2,7 +2,7 @@ package main
 
 import (
 	product_api "golang-crud-rest-api/api"
-	"golang-crud-rest-api/databaseconnection"
+	"golang-crud-rest-api/database"
 	"log"
 	"net/http"
 	"time"
@@ -14,12 +14,12 @@ import (
 func main() {
 
 	var err error
-	databaseconnection.DB, err = databaseconnection.GetDB()
+	database.DB, err = database.GetDB()
 	if err != nil {
 		log.Println("Error with database" + err.Error())
 		return
 	} else {
-		err = databaseconnection.DB.Ping()
+		err = database.DB.Ping()
 
 		if err != nil {
 			log.Println("Error conneting to the database. The error is : " + err.Error())
