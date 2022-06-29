@@ -1,4 +1,4 @@
-package api
+package product_api
 
 import (
 	"encoding/json"
