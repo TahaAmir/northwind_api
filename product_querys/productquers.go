@@ -2,7 +2,7 @@ package product_querys
 
 import (
 	"golang-crud-rest-api/database"
-	"golang-crud-rest-api/products"
+	products "golang-crud-rest-api/types"
 )
 
 var product *products.Product
@@ -48,8 +48,8 @@ func GetProduct() ([]products.Product, error) {
 func GetProductById(id int64) (products.Product, error) {
 	var od products.Product
 
-	row := database.DB.QueryRow("SELECT ProductName , SupplierID ,Discontinued, CategoryID  ,QuantityPerUnit , UnitPrice , UnitsInStock ,UnitsOnOrder  ,ReorderLevel  FROM products WHERE ProductID = ?", id)
-	err := row.Scan(&od.Name, &od.SupID, &od.Discontinued, &od.CatoID, &od.QuantityPerUnit, &od.Price, &od.UnitsInStock, &od.UnitsnOrder, &od.ReorderLevel)
+	row := database.DB.QueryRow("SELECT ProductID, ProductName , SupplierID ,Discontinued, CategoryID  ,QuantityPerUnit , UnitPrice , UnitsInStock ,UnitsOnOrder  ,ReorderLevel  FROM products WHERE ProductID = ?", id)
+	err := row.Scan(&od.ID, &od.Name, &od.SupID, &od.Discontinued, &od.CatoID, &od.QuantityPerUnit, &od.Price, &od.UnitsInStock, &od.UnitsnOrder, &od.ReorderLevel)
 	if err != nil {
 		return od, err
 	}

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"golang-crud-rest-api/database"
 	"golang-crud-rest-api/product_querys"
-	"golang-crud-rest-api/products"
 	strconve "golang-crud-rest-api/string_conversion"
+	products "golang-crud-rest-api/types"
 	"net/http"
 
 	"github.com/gorilla/mux"
