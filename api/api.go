@@ -1,11 +1,11 @@
-package apiForProducts
+package api
 
 import (
 	"encoding/json"
 	"golang-crud-rest-api/databaseconnection"
-	"golang-crud-rest-api/productquerys"
+	"golang-crud-rest-api/product_querys"
 	"golang-crud-rest-api/products"
-	"golang-crud-rest-api/strconve"
+	strconve "golang-crud-rest-api/string_conversion"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -16,7 +16,7 @@ func SetupRoutesForProducts(router *mux.Router) {
 	EnableCORS(router)
 
 	router.HandleFunc("/product", func(w http.ResponseWriter, r *http.Request) {
-		product, err := productquerys.GetProduct()
+		product, err := product_querys.GetProduct()
 		if err == nil {
 			RespondWithSuccess(product, w)
 
@@ -35,7 +35,7 @@ func SetupRoutesForProducts(router *mux.Router) {
 			RespondWithError(err, w)
 			return
 		}
-		product, err := productquerys.GetProductById(id)
+		product, err := product_querys.GetProductById(id)
 
 		if err != nil {
 			RespondWithError(err, w)
@@ -53,7 +53,7 @@ func SetupRoutesForProducts(router *mux.Router) {
 		if err != nil {
 			RespondWithError(err, w)
 		} else {
-			err := productquerys.CreateProduct(product)
+			err := product_querys.CreateProduct(product)
 			if err != nil {
 				RespondWithError(err, w)
 			} else {
@@ -70,7 +70,7 @@ func SetupRoutesForProducts(router *mux.Router) {
 		if err != nil {
 			RespondWithError(err, w)
 		} else {
-			err := productquerys.UpdateProduct(product)
+			err := product_querys.UpdateProduct(product)
 			if err != nil {
 				RespondWithError(err, w)
 			} else {
@@ -88,7 +88,7 @@ func SetupRoutesForProducts(router *mux.Router) {
 			RespondWithError(err, w)
 			return
 		}
-		err = productquerys.DeleteProduct(id)
+		err = product_querys.DeleteProduct(id)
 
 		if err != nil {
 			RespondWithError(err, w)
