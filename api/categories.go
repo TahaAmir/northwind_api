@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"golang-crud-rest-api/middleware"
 	"golang-crud-rest-api/querys"
 	strconve "golang-crud-rest-api/string_conversion"
@@ -44,16 +45,18 @@ func SetupRoutesForCategories(router *mux.Router) {
 	}).Methods(http.MethodGet)
 
 	router.HandleFunc("/categories", func(w http.ResponseWriter, r *http.Request) {
-		var category types.Catogories
-		err := json.NewDecoder(r.Body).Decode(&category)
+		// Declare a var so we can decode json into it
+		var c types.Catogories
+		err := json.NewDecoder(r.Body).Decode(&c)
+		fmt.Println(c)
 		if err != nil {
 			middleware.RespondWithError(err, w)
 		} else {
-			err := querys.CreateCatogorry(category)
+			err := querys.CreateCatogorry(c)
 			if err != nil {
 				middleware.RespondWithError(err, w)
 			} else {
-				middleware.RespondWithSuccess(true, w) //when a new category is created the api respons will be tru else false
+				middleware.RespondWithSuccess(true, w)
 			}
 		}
 	}).Methods(http.MethodPost)
@@ -74,4 +77,20 @@ func SetupRoutesForCategories(router *mux.Router) {
 			middleware.RespondWithSuccess(true, w)
 		}
 	}).Methods(http.MethodDelete)
+
+	router.HandleFunc("/categories", func(w http.ResponseWriter, r *http.Request) {
+		var c types.Catogories
+		err := json.NewDecoder(r.Body).Decode(&c)
+		fmt.Println(c)
+		if err != nil {
+			middleware.RespondWithError(err, w)
+		} else {
+			err := querys.UpdateCategory(c)
+			if err != nil {
+				middleware.RespondWithError(err, w)
+			} else {
+				middleware.RespondWithSuccess(true, w)
+			}
+		}
+	}).Methods(http.MethodPut)
 }

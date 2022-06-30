@@ -7,7 +7,7 @@ import (
 
 func CreateCatogorry(c types.Catogories) error {
 
-	_, err := database.DB.Exec("INSERT INTO categories (CategoryName,Description,Picture ", c.Name, c.Description, c.Picture)
+	_, err := database.DB.Exec("INSERT INTO categories (CategoryName,Description,Picture) VALUES (?,?,?) ", c.Name, c.Description, c.Picture)
 	return err
 }
 
