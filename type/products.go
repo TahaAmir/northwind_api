@@ -1,7 +1,7 @@
 package types
 
 type Product struct {
-	ID              int64   `json:"ProductID"`
+	ID              int64   `json:"ProductID,string,omitempty"`
 	Name            string  `json:"ProductName"`
 	SupID           int     `json:"SupplierID"`
 	CatoID          int     `json:"CategoryID"`

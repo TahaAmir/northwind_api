@@ -2,31 +2,29 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"golang-crud-rest-api/middleware"
 	"golang-crud-rest-api/querys"
 	types "golang-crud-rest-api/type"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
 
-func SetupRoutesForCategories(router *mux.Router) {
-
+func SetupRoutesForCustomers(router *mux.Router) {
 	middleware.EnableCORS(router)
 
-	router.HandleFunc("/categories", func(w http.ResponseWriter, r *http.Request) {
-		category, err := querys.GetCategory()
+	router.HandleFunc("/customers", func(w http.ResponseWriter, r *http.Request) {
+		customer, err := querys.GetCustomer()
 		if err == nil {
-			middleware.RespondWithSuccess(category, w)
-
+			middleware.RespondWithSuccess(customer, w)
 		} else {
 			middleware.RespondWithError(err, w)
-
 		}
+
 	}).Methods(http.MethodGet)
 
-	router.HandleFunc("/categories/{id}", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/customers/{id}", func(w http.ResponseWriter, r *http.Request) {
 		idAsString := mux.Vars(r)["id"]
 		id, err := StringToInt64(idAsString)
 
@@ -34,24 +32,24 @@ func SetupRoutesForCategories(router *mux.Router) {
 			middleware.RespondWithError(err, w)
 			return
 		}
-		category, err := querys.GetCategoryById(id)
+		customer, err := querys.GetCustomerById(id)
 
 		if err != nil {
 			middleware.RespondWithError(err, w)
 		} else {
-			middleware.RespondWithSuccess(category, w)
+			middleware.RespondWithSuccess(customer, w)
 		}
 	}).Methods(http.MethodGet)
 
 	router.HandleFunc("/categories", func(w http.ResponseWriter, r *http.Request) {
-		// Declare a var so we can decode json into it
-		var c types.Catogories
+
+		var c types.Customers
 		err := json.NewDecoder(r.Body).Decode(&c)
-		fmt.Println(c)
+
 		if err != nil {
 			middleware.RespondWithError(err, w)
 		} else {
-			err := querys.CreateCatogorry(c)
+			err := querys.CreateCustomer(c)
 			if err != nil {
 				middleware.RespondWithError(err, w)
 			} else {
@@ -60,15 +58,14 @@ func SetupRoutesForCategories(router *mux.Router) {
 		}
 	}).Methods(http.MethodPost)
 
-	router.HandleFunc("/categories/{id}", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/customers/{id}", func(w http.ResponseWriter, r *http.Request) {
 		idAsString := mux.Vars(r)["id"]
 		id, err := StringToInt64(idAsString)
-
 		if err != nil {
 			middleware.RespondWithError(err, w)
 			return
 		}
-		err = querys.DeleteCatogory(id)
+		err = querys.DeleteCustomer(id)
 
 		if err != nil {
 			middleware.RespondWithError(err, w)
@@ -77,14 +74,13 @@ func SetupRoutesForCategories(router *mux.Router) {
 		}
 	}).Methods(http.MethodDelete)
 
-	router.HandleFunc("/categories", func(w http.ResponseWriter, r *http.Request) {
-		var c types.Catogories
+	router.HandleFunc("/customers", func(w http.ResponseWriter, r *http.Request) {
+		var c types.Customers
 		err := json.NewDecoder(r.Body).Decode(&c)
-		fmt.Println(c)
 		if err != nil {
 			middleware.RespondWithError(err, w)
 		} else {
-			err := querys.UpdateCategory(c)
+			err := querys.UpdateCustomer(c)
 			if err != nil {
 				middleware.RespondWithError(err, w)
 			} else {
@@ -92,4 +88,13 @@ func SetupRoutesForCategories(router *mux.Router) {
 			}
 		}
 	}).Methods(http.MethodPut)
+
+}
+
+func StringToInt64(s string) (int64, error) {
+	num, err := strconv.ParseInt(s, 0, 64)
+	if err != nil {
+		return 0, err
+	}
+	return num, err
 }

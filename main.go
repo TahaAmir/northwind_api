@@ -32,6 +32,7 @@ func main() {
 	router := mux.NewRouter()
 	product_api.SetupRoutesForProducts(router)
 	api.SetupRoutesForCategories(router)
+	api.SetupRoutesForCustomers(router)
 
 	port := ":8000"
 

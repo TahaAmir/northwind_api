@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"golang-crud-rest-api/middleware"
 	product_querys "golang-crud-rest-api/querys"
-	strconve "golang-crud-rest-api/string_conversion"
 	products "golang-crud-rest-api/type"
 	"net/http"
 
@@ -29,7 +28,7 @@ func SetupRoutesForProducts(router *mux.Router) {
 	//To get by id
 	router.HandleFunc("/product/{id}", func(w http.ResponseWriter, r *http.Request) {
 		idAsString := mux.Vars(r)["id"]
-		id, err := strconve.StringToInt64(idAsString)
+		id, err := StringToInt64(idAsString)
 
 		if err != nil {
 			middleware.RespondWithError(err, w)
@@ -82,7 +81,7 @@ func SetupRoutesForProducts(router *mux.Router) {
 	//To DELETE
 	router.HandleFunc("/product/{id}", func(w http.ResponseWriter, r *http.Request) {
 		idAsString := mux.Vars(r)["id"]
-		id, err := strconve.StringToInt64(idAsString)
+		id, err := StringToInt64(idAsString)
 
 		if err != nil {
 			middleware.RespondWithError(err, w)
