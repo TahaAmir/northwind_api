@@ -48,8 +48,8 @@ func GetCustomer() ([]types.Customers, error) {
 func GetCustomerById(id int64) (types.Customers, error) {
 	var c types.Customers
 
-	rows := database.DB.QueryRow("SELECT CompanyName,ContactName,ContactTitle,Address,City,Region,PostalCode,Country,Phone,Fax,Image, ImageThumbnail WHERE CustomerID =? ", id)
-	err := rows.Scan(&c.CompanyName, &c.ContactName, &c.ContactTitle, &c.Address, &c.City, &c.Region, &c.PostalCode, &c.Country, &c.Phone, &c.Fax, &c.Image, &c.ImageThumbnail, &c.ID)
+	rows := database.DB.QueryRow("SELECT CustomerID,CompanyName,ContactName,ContactTitle,Address,City,Region,PostalCode,Country,Phone,Fax,Image, ImageThumbnail FROM customers WHERE CustomerID =? ", id)
+	err := rows.Scan(&c.ID, &c.CompanyName, &c.ContactName, &c.ContactTitle, &c.Address, &c.City, &c.Region, &c.PostalCode, &c.Country, &c.Phone, &c.Fax, &c.Image, &c.ImageThumbnail)
 
 	if err != nil {
 		return c, err
