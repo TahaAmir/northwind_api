@@ -37,6 +37,7 @@ func main() {
 	api.SetUpRoutesForOrderDetails(router)
 	api.SetUpRoutesForOrders(router)
 	api.SetupRoutesForShippers(router)
+	api.SetupRoutesForSupplier(router)
 
 	port := ":8000"
 
