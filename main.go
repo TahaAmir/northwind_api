@@ -33,6 +33,10 @@ func main() {
 	product_api.SetupRoutesForProducts(router)
 	api.SetupRoutesForCategories(router)
 	api.SetupRoutesForCustomers(router)
+	api.SetupRoutesForEmployee(router)
+	api.SetUpRoutesForOrderDetails(router)
+	api.SetUpRoutesForOrders(router)
+	api.SetupRoutesForShippers(router)
 
 	port := ":8000"
 

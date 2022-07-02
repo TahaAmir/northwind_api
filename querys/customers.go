@@ -7,7 +7,7 @@ import (
 
 func CreateCustomer(c types.Customers) error {
 
-	_, err := database.DB.Exec("INSERT INTO customers (CompanyName,ContactName,ContactTitle,Address,City,Region,PostalCode,Country,Phone,Fax,Image, ImageThumbnail)VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+	_, err := database.DB.Exec("INSERT INTO customers (CompanyName,ContactName,ContactTitle,Address,City,Region,PostalCode,Country,Phone,Fax,Image, ImageThumbnail) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
 		c.CompanyName, c.ContactName, c.ContactTitle, c.Address, c.City, c.Region, c.PostalCode, c.Country, c.Phone, c.Fax, c.Image, c.ImageThumbnail)
 	return err
 }

@@ -2,29 +2,29 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"golang-crud-rest-api/middleware"
 	"golang-crud-rest-api/querys"
 	types "golang-crud-rest-api/type"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 )
 
-func SetupRoutesForCustomers(router *mux.Router) {
+func SetUpRoutesForOrders(router *mux.Router) {
+
 	middleware.EnableCORS(router)
 
-	router.HandleFunc("/customers", func(w http.ResponseWriter, r *http.Request) {
-		customer, err := querys.GetCustomer()
+	router.HandleFunc("/orders", func(w http.ResponseWriter, r *http.Request) {
+		order, err := querys.GetOrders()
 		if err == nil {
-			middleware.RespondWithSuccess(customer, w)
+			middleware.RespondWithSuccess(order, w)
 		} else {
 			middleware.RespondWithError(err, w)
 		}
-
 	}).Methods(http.MethodGet)
 
-	router.HandleFunc("/customers/{id}", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/orders/{id}", func(w http.ResponseWriter, r *http.Request) {
 		idAsString := mux.Vars(r)["id"]
 		id, err := StringToInt64(idAsString)
 
@@ -32,26 +32,27 @@ func SetupRoutesForCustomers(router *mux.Router) {
 			middleware.RespondWithError(err, w)
 			return
 		}
-		customer, err := querys.GetCustomerById(id)
+		orders, err := querys.GetOrdersByID(id)
 
 		if err != nil {
 			middleware.RespondWithError(err, w)
 		} else {
-			middleware.RespondWithSuccess(customer, w)
+			middleware.RespondWithSuccess(orders, w)
 		}
 	}).Methods(http.MethodGet)
 
-	router.HandleFunc("/customers", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/orders", func(w http.ResponseWriter, r *http.Request) {
 
-		var c types.Customers
-		err := json.NewDecoder(r.Body).Decode(&c)
+		var o types.Orders
+		err := json.NewDecoder(r.Body).Decode(&o)
 
 		if err != nil {
 			middleware.RespondWithError(err, w)
 		} else {
-			err := querys.CreateCustomer(c)
+			err := querys.CreateOrders(o)
 			if err != nil {
 				middleware.RespondWithError(err, w)
+				fmt.Println(err)
 
 			} else {
 				middleware.RespondWithSuccess(true, w)
@@ -59,14 +60,14 @@ func SetupRoutesForCustomers(router *mux.Router) {
 		}
 	}).Methods(http.MethodPost)
 
-	router.HandleFunc("/customers/{id}", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/orders/{id}", func(w http.ResponseWriter, r *http.Request) {
 		idAsString := mux.Vars(r)["id"]
 		id, err := StringToInt64(idAsString)
 		if err != nil {
 			middleware.RespondWithError(err, w)
 			return
 		}
-		err = querys.DeleteCustomer(id)
+		err = querys.DeleteOrders(id)
 
 		if err != nil {
 			middleware.RespondWithError(err, w)
@@ -75,13 +76,13 @@ func SetupRoutesForCustomers(router *mux.Router) {
 		}
 	}).Methods(http.MethodDelete)
 
-	router.HandleFunc("/customers", func(w http.ResponseWriter, r *http.Request) {
-		var c types.Customers
-		err := json.NewDecoder(r.Body).Decode(&c)
+	router.HandleFunc("/orders", func(w http.ResponseWriter, r *http.Request) {
+		var o types.Orders
+		err := json.NewDecoder(r.Body).Decode(&o)
 		if err != nil {
 			middleware.RespondWithError(err, w)
 		} else {
-			err := querys.UpdateCustomer(c)
+			err := querys.UpdateOrders(o)
 			if err != nil {
 				middleware.RespondWithError(err, w)
 			} else {
@@ -89,13 +90,4 @@ func SetupRoutesForCustomers(router *mux.Router) {
 			}
 		}
 	}).Methods(http.MethodPut)
-
-}
-
-func StringToInt64(s string) (int64, error) {
-	num, err := strconv.ParseInt(s, 0, 64)
-	if err != nil {
-		return 0, err
-	}
-	return num, err
 }
