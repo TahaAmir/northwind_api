@@ -9,17 +9,17 @@ Clone this repo
 - go get github.com/joho/godotenv
 
 
-# Create a database in MySQL
+- Create a database in MySQL
 
-# Create a file called .env 
+- Create a file called .env 
 
-# Configure credentials in .env
+- Configure credentials in .env
 
-# In the database create the tables according to northwind.sql
+- In the database create the tables according to northwind.sql
 
-# Compile with go run .
+- Compile with go run .
 
-# API's Implemented
+ # API's Implemented:
 
 - GET     /api
 - GET     /api/{id} 
@@ -27,4 +27,4 @@ Clone this repo
 - PUT     /api/{id} 
 - DELETE  /api/{id} 
 
-Now you can test the API with postman, it will be on localhost:8000
+- Now you can test the API with postman, it will be on localhost:8000
