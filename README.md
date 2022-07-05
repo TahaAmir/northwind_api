@@ -13,8 +13,25 @@ Clone this repo
 - GET     /api
 - GET     /api/{id} 
 - POST    /api
-- PUT     /api/{id} 
+- PUT     /api 
 - DELETE  /api/{id}  
+
+# Databae Tables 
+
+# API Reference
+
+- Get  /table name or any table u want to get. It will get all the data of the table requested.
+- Get  /table name/{id}  It will get all the data of the table by Id that is given.
+- POST /table name  will create a new column in the table.
+- PUT  /table name  will update the table. 
+- Delete /table name/{id}  Will delete the coloumn in  table by a given Id. 
+
+# Project is created with:
+
+- Golang
+- gorilla/mux
+- joho/godotenv
+- MYSQL
 
 # To start 
 - Create a database in MySQL
