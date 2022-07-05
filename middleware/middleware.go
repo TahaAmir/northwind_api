@@ -29,9 +29,10 @@ func MiddlewareCors(next http.Handler) http.Handler {
 }
 
 //To respond with error when therer is one
-func RespondWithError(err error, w http.ResponseWriter) {
+func RespondWithError(w http.ResponseWriter, code int, message string) {
 	w.WriteHeader(http.StatusInternalServerError)
-	json.NewEncoder(w).Encode(err.Error())
+	//json.NewEncoder(w).Encode(err.Error())
+	RespondWithJSON(w, code, map[string]string{"error": message})
 }
 
 //To respond with success when there is no error
@@ -39,4 +40,12 @@ func RespondWithSuccess(data interface{}, w http.ResponseWriter) {
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(data)
+}
+
+func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+	response, _ := json.Marshal(payload)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	w.Write(response)
 }

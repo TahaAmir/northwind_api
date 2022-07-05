@@ -7,6 +7,7 @@ import (
 	"golang-crud-rest-api/querys"
 	types "golang-crud-rest-api/type"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -16,11 +17,21 @@ func SetUpRoutesForOrders(router *mux.Router) {
 	middleware.EnableCORS(router)
 
 	router.HandleFunc("/orders", func(w http.ResponseWriter, r *http.Request) {
-		order, err := querys.GetOrders()
+
+		count, _ := strconv.Atoi(r.FormValue("count"))
+		start, _ := strconv.Atoi(r.FormValue("start"))
+
+		if count > 10 || count < 1 {
+			count = 10
+		}
+		if start < 0 {
+			start = 0
+		}
+		order, err := querys.GetOrders(start, count)
 		if err == nil {
-			middleware.RespondWithSuccess(order, w)
+			middleware.RespondWithJSON(w, http.StatusOK, order)
 		} else {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		}
 	}).Methods(http.MethodGet)
 
@@ -29,15 +40,15 @@ func SetUpRoutesForOrders(router *mux.Router) {
 		id, err := StringToInt64(idAsString)
 
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid Order ID")
 			return
 		}
 		orders, err := querys.GetOrdersByID(id)
 
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusNotFound, "Order Not found")
 		} else {
-			middleware.RespondWithSuccess(orders, w)
+			middleware.RespondWithJSON(w, http.StatusOK, orders)
 		}
 	}).Methods(http.MethodGet)
 
@@ -47,15 +58,15 @@ func SetUpRoutesForOrders(router *mux.Router) {
 		err := json.NewDecoder(r.Body).Decode(&o)
 
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		} else {
 			err := querys.CreateOrders(o)
 			if err != nil {
-				middleware.RespondWithError(err, w)
+				middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 				fmt.Println(err)
 
 			} else {
-				middleware.RespondWithSuccess(true, w)
+				middleware.RespondWithJSON(w, http.StatusOK, true)
 			}
 		}
 	}).Methods(http.MethodPost)
@@ -64,15 +75,15 @@ func SetUpRoutesForOrders(router *mux.Router) {
 		idAsString := mux.Vars(r)["id"]
 		id, err := StringToInt64(idAsString)
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid Order ID")
 			return
 		}
 		err = querys.DeleteOrders(id)
 
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		} else {
-			middleware.RespondWithSuccess(true, w)
+			middleware.RespondWithJSON(w, http.StatusOK, true)
 		}
 	}).Methods(http.MethodDelete)
 
@@ -80,13 +91,13 @@ func SetUpRoutesForOrders(router *mux.Router) {
 		var o types.Orders
 		err := json.NewDecoder(r.Body).Decode(&o)
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		} else {
 			err := querys.UpdateOrders(o)
 			if err != nil {
-				middleware.RespondWithError(err, w)
+				middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 			} else {
-				middleware.RespondWithSuccess(true, w)
+				middleware.RespondWithJSON(w, http.StatusOK, true)
 			}
 		}
 	}).Methods(http.MethodPut)

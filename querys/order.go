@@ -74,8 +74,11 @@ func UpdateOrders(o types.Orders) (err error) {
 	return err
 }
 
-func GetOrders() ([]types.Orders, error) {
+func GetOrders(start, count int) ([]types.Orders, error) {
 
+	if count == 0 {
+		count = 10
+	}
 	orders := []types.Orders{}
 
 	rows, err := database.DB.Query(`SELECT 
@@ -93,7 +96,7 @@ func GetOrders() ([]types.Orders, error) {
 	ShipRegion,
 	ShipPostalCode,
 	ShipCountry 
-	FROM orders `)
+	FROM orders LIMIT ? OFFSET ? `, start, count)
 
 	if err != nil {
 		return orders, err

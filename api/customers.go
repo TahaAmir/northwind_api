@@ -15,11 +15,22 @@ func SetupRoutesForCustomers(router *mux.Router) {
 	middleware.EnableCORS(router)
 
 	router.HandleFunc("/customers", func(w http.ResponseWriter, r *http.Request) {
-		customer, err := querys.GetCustomer()
+
+		count, _ := strconv.Atoi(r.FormValue("count"))
+		start, _ := strconv.Atoi(r.FormValue("start"))
+
+		if count > 10 || count < 1 {
+			count = 10
+		}
+		if start < 0 {
+			start = 0
+		}
+
+		customer, err := querys.GetCustomer(start, count)
 		if err == nil {
-			middleware.RespondWithSuccess(customer, w)
+			middleware.RespondWithJSON(w, http.StatusOK, customer)
 		} else {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		}
 
 	}).Methods(http.MethodGet)
@@ -29,15 +40,15 @@ func SetupRoutesForCustomers(router *mux.Router) {
 		id, err := StringToInt64(idAsString)
 
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid Customer ID")
 			return
 		}
 		customer, err := querys.GetCustomerById(id)
 
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusNotFound, "Customer not found")
 		} else {
-			middleware.RespondWithSuccess(customer, w)
+			middleware.RespondWithJSON(w, http.StatusOK, customer)
 		}
 	}).Methods(http.MethodGet)
 
@@ -47,14 +58,14 @@ func SetupRoutesForCustomers(router *mux.Router) {
 		err := json.NewDecoder(r.Body).Decode(&c)
 
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		} else {
 			err := querys.CreateCustomer(c)
 			if err != nil {
-				middleware.RespondWithError(err, w)
+				middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 
 			} else {
-				middleware.RespondWithSuccess(true, w)
+				middleware.RespondWithJSON(w, http.StatusOK, true)
 			}
 		}
 	}).Methods(http.MethodPost)
@@ -63,15 +74,15 @@ func SetupRoutesForCustomers(router *mux.Router) {
 		idAsString := mux.Vars(r)["id"]
 		id, err := StringToInt64(idAsString)
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid Customer ID")
 			return
 		}
 		err = querys.DeleteCustomer(id)
 
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		} else {
-			middleware.RespondWithSuccess(true, w)
+			middleware.RespondWithJSON(w, http.StatusOK, true)
 		}
 	}).Methods(http.MethodDelete)
 
@@ -79,13 +90,13 @@ func SetupRoutesForCustomers(router *mux.Router) {
 		var c types.Customers
 		err := json.NewDecoder(r.Body).Decode(&c)
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid resquest payload")
 		} else {
 			err := querys.UpdateCustomer(c)
 			if err != nil {
-				middleware.RespondWithError(err, w)
+				middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 			} else {
-				middleware.RespondWithSuccess(true, w)
+				middleware.RespondWithJSON(w, http.StatusOK, true)
 			}
 		}
 	}).Methods(http.MethodPut)

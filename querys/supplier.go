@@ -69,10 +69,13 @@ func UpdateSuppliers(s types.Supplier) (err error) {
 	return err
 }
 
-func GetSupplier() ([]types.Supplier, error) {
+func GetSupplier(start, count int) ([]types.Supplier, error) {
 
 	supplier := []types.Supplier{}
 
+	if count == 0 {
+		count = 10
+	}
 	rows, err := database.DB.Query(`SELECT 
 	SupplierID,
     CompanyName,
@@ -85,11 +88,14 @@ func GetSupplier() ([]types.Supplier, error) {
 	Country,
 	Phone,
 	Fax,
-	HomePage FROM suppliers`)
+	HomePage FROM suppliers LIMIT ? OFFSET ?`, count, start)
 
 	if err != nil {
 		return supplier, err
 	}
+
+	defer rows.Close()
+
 	for rows.Next() {
 		var s types.Supplier
 

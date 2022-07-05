@@ -18,10 +18,10 @@ func SetupRoutesForCategories(router *mux.Router) {
 	router.HandleFunc("/categories", func(w http.ResponseWriter, r *http.Request) {
 		category, err := querys.GetCategory()
 		if err == nil {
-			middleware.RespondWithSuccess(category, w)
+			middleware.RespondWithJSON(w, http.StatusOK, category)
 
 		} else {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 
 		}
 	}).Methods(http.MethodGet)
@@ -31,15 +31,15 @@ func SetupRoutesForCategories(router *mux.Router) {
 		id, err := StringToInt64(idAsString)
 
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid Category ID")
 			return
 		}
 		category, err := querys.GetCategoryById(id)
 
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusNotFound, "Category not found")
 		} else {
-			middleware.RespondWithSuccess(category, w)
+			middleware.RespondWithJSON(w, http.StatusOK, category)
 		}
 	}).Methods(http.MethodGet)
 
@@ -47,15 +47,15 @@ func SetupRoutesForCategories(router *mux.Router) {
 		// Declare a var so we can decode json into it
 		var c types.Catogories
 		err := json.NewDecoder(r.Body).Decode(&c)
-		fmt.Println(c)
+
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		} else {
 			err := querys.CreateCatogorry(c)
 			if err != nil {
-				middleware.RespondWithError(err, w)
+				middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 			} else {
-				middleware.RespondWithSuccess(true, w)
+				middleware.RespondWithJSON(w, http.StatusCreated, c)
 			}
 		}
 	}).Methods(http.MethodPost)
@@ -65,15 +65,15 @@ func SetupRoutesForCategories(router *mux.Router) {
 		id, err := StringToInt64(idAsString)
 
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid Category ID")
 			return
 		}
 		err = querys.DeleteCatogory(id)
 
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		} else {
-			middleware.RespondWithSuccess(true, w)
+			middleware.RespondWithJSON(w, http.StatusOK, true)
 		}
 	}).Methods(http.MethodDelete)
 
@@ -82,13 +82,13 @@ func SetupRoutesForCategories(router *mux.Router) {
 		err := json.NewDecoder(r.Body).Decode(&c)
 		fmt.Println(c)
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid resquest payload")
 		} else {
 			err := querys.UpdateCategory(c)
 			if err != nil {
-				middleware.RespondWithError(err, w)
+				middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 			} else {
-				middleware.RespondWithSuccess(true, w)
+				middleware.RespondWithJSON(w, http.StatusOK, true)
 			}
 		}
 	}).Methods(http.MethodPut)

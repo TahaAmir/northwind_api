@@ -6,8 +6,25 @@ import (
 )
 
 func CreateProduct(p products.Product) error {
-	_, err := database.DB.Exec("INSERT INTO products (  ProductName , SupplierID , CategoryID  ,QuantityPerUnit , UnitPrice , UnitsInStock ,UnitsOnOrder  ,ReorderLevel,Discontinued) VALUES (?,?,?,?,?,?,?,?,?)  ",
-		p.Name, p.SupID, p.CatoID, p.QuantityPerUnit, p.Price, p.UnitsInStock, p.UnitsnOrder, p.ReorderLevel, p.Discontinued)
+	_, err := database.DB.Exec(`INSERT INTO products 
+	(  ProductName ,
+	   SupplierID , 
+	   CategoryID  ,
+	   QuantityPerUnit , 
+	   UnitPrice ,
+	   UnitsInStock ,
+	   UnitsOnOrder  ,
+	   ReorderLevel,
+	   Discontinued) VALUES (?,?,?,?,?,?,?,?,?)  `,
+		p.Name,
+		p.SupID,
+		p.CatoID,
+		p.QuantityPerUnit,
+		p.Price,
+		p.UnitsInStock,
+		p.UnitsnOrder,
+		p.ReorderLevel,
+		p.Discontinued)
 	return err
 
 }
@@ -20,21 +37,64 @@ func DeleteProduct(id int64) error {
 
 func UpdateProduct(p products.Product) error {
 
-	_, err := database.DB.Exec("UPDATE products SET ProductName = ? , SupplierID = ?, CategoryID = ?  ,QuantityPerUnit = ? , UnitPrice = ?, UnitsInStock = ?,UnitsOnOrder =?  ,ReorderLevel= ? , Discontinued=? WHERE ProductID = ? ", p.Name, p.SupID, p.CatoID, p.QuantityPerUnit, p.Price, p.UnitsInStock, p.UnitsnOrder, p.ReorderLevel, p.Discontinued, p.ID)
+	_, err := database.DB.Exec(`UPDATE products SET 
+	ProductName = ? , 
+	SupplierID = ?, 
+	CategoryID = ?  ,
+	QuantityPerUnit = ? , 
+	UnitPrice = ?, 
+	UnitsInStock = ?,
+	UnitsOnOrder =?  ,
+	ReorderLevel= ? , 
+	Discontinued=? WHERE ProductID = ? `,
+		p.Name,
+		p.SupID,
+		p.CatoID,
+		p.QuantityPerUnit,
+		p.Price,
+		p.UnitsInStock,
+		p.UnitsnOrder,
+		p.ReorderLevel,
+		p.Discontinued,
+		p.ID)
 
 	return err
 }
 
-func GetProduct() ([]products.Product, error) {
+func GetProduct(start, count int) ([]products.Product, error) {
+
+	if count == 0 {
+		count = 10
+	}
 	od := []products.Product{}
 
-	rows, err := database.DB.Query("SELECT ProductID , ProductName,Discontinued , SupplierID , CategoryID  ,QuantityPerUnit , UnitPrice , UnitsInStock ,UnitsOnOrder ,ReorderLevel FROM products")
+	rows, err := database.DB.Query(`SELECT 
+	ProductID , 
+	ProductName,
+	Discontinued , 
+	SupplierID , 
+	CategoryID  ,
+	QuantityPerUnit , 
+	UnitPrice , 
+	UnitsInStock ,
+	UnitsOnOrder ,
+	ReorderLevel FROM products LIMIT ? OFFSET ? `, count, start)
 	if err != nil {
 		return od, err
 	}
 	for rows.Next() {
 		var p products.Product
-		err = rows.Scan(&p.ID, &p.Name, &p.Discontinued, &p.SupID, &p.CatoID, &p.QuantityPerUnit, &p.Price, &p.UnitsInStock, &p.UnitsnOrder, &p.ReorderLevel)
+		err = rows.Scan(
+			&p.ID,
+			&p.Name,
+			&p.Discontinued,
+			&p.SupID,
+			&p.CatoID,
+			&p.QuantityPerUnit,
+			&p.Price,
+			&p.UnitsInStock,
+			&p.UnitsnOrder,
+			&p.ReorderLevel)
 		if err != nil {
 			return od, err
 		}
@@ -46,8 +106,28 @@ func GetProduct() ([]products.Product, error) {
 func GetProductById(id int64) (products.Product, error) {
 	var od products.Product
 
-	row := database.DB.QueryRow("SELECT ProductID, ProductName , SupplierID ,Discontinued, CategoryID  ,QuantityPerUnit , UnitPrice , UnitsInStock ,UnitsOnOrder  ,ReorderLevel  FROM products WHERE ProductID = ?", id)
-	err := row.Scan(&od.ID, &od.Name, &od.SupID, &od.Discontinued, &od.CatoID, &od.QuantityPerUnit, &od.Price, &od.UnitsInStock, &od.UnitsnOrder, &od.ReorderLevel)
+	row := database.DB.QueryRow(`SELECT 
+	ProductID, 
+	ProductName , 
+	SupplierID ,
+	Discontinued, 
+	CategoryID  ,
+	QuantityPerUnit , 
+	UnitPrice , 
+	UnitsInStock ,
+	UnitsOnOrder  ,
+	ReorderLevel  FROM products WHERE ProductID = ?`, id)
+	err := row.Scan(
+		&od.ID,
+		&od.Name,
+		&od.SupID,
+		&od.Discontinued,
+		&od.CatoID,
+		&od.QuantityPerUnit,
+		&od.Price,
+		&od.UnitsInStock,
+		&od.UnitsnOrder,
+		&od.ReorderLevel)
 	if err != nil {
 		return od, err
 	}

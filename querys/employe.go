@@ -89,7 +89,11 @@ func UpdateEmployee(e types.Employee) (err error) {
 	return
 }
 
-func GetEmployee() ([]types.Employee, error) {
+func GetEmployee(start, count int) ([]types.Employee, error) {
+
+	if count == 0 {
+		count = 10
+	}
 	employee := []types.Employee{}
 	rows, err := database.DB.Query(`SELECT 
 	 EmployeeID
@@ -108,8 +112,8 @@ func GetEmployee() ([]types.Employee, error) {
 	,Extension
 	,Photo
 	,Notes
-	,ReportsTo FROM employees
-	`)
+	,ReportsTo FROM employees  LIMIT ? OFFSET ?
+	`, count, start)
 	if err != nil {
 		return employee, err
 	}

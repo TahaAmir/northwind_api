@@ -18,10 +18,10 @@ func SetupRoutesForShippers(router *mux.Router) {
 	router.HandleFunc("/shippers", func(w http.ResponseWriter, r *http.Request) {
 		shipper, err := querys.GetShippers()
 		if err == nil {
-			middleware.RespondWithSuccess(shipper, w)
+			middleware.RespondWithJSON(w, http.StatusOK, shipper)
 
 		} else {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 
 		}
 	}).Methods(http.MethodGet)
@@ -31,15 +31,15 @@ func SetupRoutesForShippers(router *mux.Router) {
 		id, err := StringToInt64(idAsString)
 
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid Shipper ID")
 			return
 		}
 		shipper, err := querys.GetShippersById(id)
 
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusNotFound, "Shipper's Id not Found")
 		} else {
-			middleware.RespondWithSuccess(shipper, w)
+			middleware.RespondWithJSON(w, http.StatusOK, shipper)
 		}
 	}).Methods(http.MethodGet)
 
@@ -49,13 +49,13 @@ func SetupRoutesForShippers(router *mux.Router) {
 		err := json.NewDecoder(r.Body).Decode(&s)
 		fmt.Println(s)
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		} else {
 			err := querys.CreateShippers(s)
 			if err != nil {
-				middleware.RespondWithError(err, w)
+				middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 			} else {
-				middleware.RespondWithSuccess(true, w)
+				middleware.RespondWithJSON(w, http.StatusOK, true)
 			}
 		}
 	}).Methods(http.MethodPost)
@@ -65,15 +65,15 @@ func SetupRoutesForShippers(router *mux.Router) {
 		id, err := StringToInt64(idAsString)
 
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid Product ID")
 			return
 		}
 		err = querys.DeleteShippers(id)
 
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		} else {
-			middleware.RespondWithSuccess(true, w)
+			middleware.RespondWithJSON(w, http.StatusOK, true)
 		}
 	}).Methods(http.MethodDelete)
 
@@ -82,13 +82,13 @@ func SetupRoutesForShippers(router *mux.Router) {
 		err := json.NewDecoder(r.Body).Decode(&c)
 		fmt.Println(c)
 		if err != nil {
-			middleware.RespondWithError(err, w)
+			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		} else {
 			err := querys.UpdateShippers(c)
 			if err != nil {
-				middleware.RespondWithError(err, w)
+				middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 			} else {
-				middleware.RespondWithSuccess(true, w)
+				middleware.RespondWithJSON(w, http.StatusOK, true)
 			}
 		}
 	}).Methods(http.MethodPut)
