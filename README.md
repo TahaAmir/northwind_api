@@ -8,7 +8,15 @@ Clone this repo
 - go get github.com/gorilla/mux
 - go get github.com/joho/godotenv
 
+ # API's Implemented:
 
+- GET     /api
+- GET     /api/{id} 
+- POST    /api
+- PUT     /api/{id} 
+- DELETE  /api/{id}  
+
+# To start 
 - Create a database in MySQL
 
 - Create a file called .env 
@@ -19,12 +27,7 @@ Clone this repo
 
 - Compile with go run .
 
- # API's Implemented:
-
-- GET     /api
-- GET     /api/{id} 
-- POST    /api
-- PUT     /api/{id} 
-- DELETE  /api/{id} 
-
 - Now you can test the API with postman, it will be on localhost:8000
+
+
+
