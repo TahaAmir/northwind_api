@@ -1,6 +1,6 @@
 # northwind_api
 
-Clone this repo
+- Clone this repo
 
 # Install the dependencies with:
 
@@ -17,6 +17,8 @@ Clone this repo
 - DELETE  /api/{id}  
 
 # Databae Tables 
+
+![] (images/3.png)
 
 # API Reference
 
