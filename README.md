@@ -52,22 +52,17 @@ Returns a book by id
    <details><summary>Show example response</summary>
    <p>
   ```json
-  {
-  "data": [
+ 
     {
         "ShipperID": 1,
         "CompanyName": "Speedy Express",
         "Phone": "(503) 555-9831"
     }
+   </p>
+ ```
+</details>
    
-  ]
-}
-```
-    </p>
-    </details>
-    
-
-### POST /table name  
+#### POST /table name  
 Creates a new Column
 #### Response
    <details><summary>Show example response</summary>
@@ -85,7 +80,7 @@ Creates a new Column
 ```
     </p>
     </details>
-    ---
+
 ### PUT  /table name 
 Update existing Coloumn
 #### Response
@@ -120,7 +115,6 @@ Delete an existing column by ID
     </p>
     </details>
     
-    ---
 
 # Project is created with:
 
