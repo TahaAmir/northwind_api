@@ -25,96 +25,114 @@ A api for building REST Web Services in Go. Uses gorilla/mux as a router/dispatc
 # API Reference
 
 ### Get  /table name 
-   Returns result identity
- #### Response
-   <details><summary>Show example response</summary>
-   <p>
+Returns result identity
+
+#### Response
+
+<details><summary>Show example response</summary>
+<p>
+
 ```json
-  {
-  "data": [
-    {
-        "ShipperID": 1,
-        "CompanyName": "Speedy Express",
-        "Phone": "(503) 555-9831"
+   {
+        "ShipperID": 2,
+        "CompanyName": "United Package",
+        "Phone": "(503) 555-3199"
     },
-    {
+     {
+        "ShipperID": 3,
+        "CompanyName": "United United",
+        "Phone": "(503) 555-3199"
+    }
+```
+
+</p>
+</details>
+
+---
+### Get  /table name/{id}  
+Returns  by id
+
+#### Response
+
+<details><summary>Show example response</summary>
+<p>
+
+```json
+   {
         "ShipperID": 2,
         "CompanyName": "United Package",
         "Phone": "(503) 555-3199"
     }
-  ]
-}
 ```
 
-### Get  /table name/{id}  
-Returns a book by id
-#### Response
-   <details><summary>Show example response</summary>
-   <p>
-  ```json
- 
-    {
-        "ShipperID": 1,
-        "CompanyName": "Speedy Express",
-        "Phone": "(503) 555-9831"
-    }
-   </p>
- ```
+</p>
 </details>
-   
-#### POST /table name  
-Creates a new Column
-#### Response
-   <details><summary>Show example response</summary>
-   <p>
- ```json
-  {
-  "data": [
-    {
-        "ShipperID": 1,
-        "CompanyName": "Speedy Express",
-        "Phone": "(503) 555-9831"
-    }
-  ]
-}
-```
-    </p>
-    </details>
 
-### PUT  /table name 
-Update existing Coloumn
+
+---
+ 
+#### POST /table name  
+Create's a Coloumn
+	
 #### Response
- <details><summary>Show example response</summary>
-  <p>
-   ```json
-  {
-  "data": [
-    {
-        "ShipperID": 2,
-        "CompanyName": "United-Package",
+
+<details><summary>Show example response</summary>
+<p>
+
+```json
+   {
+        "ShipperID": 4,
+        "CompanyName": "United Package",
         "Phone": "(503) 555-3199"
     }
-  ]
-}
 ```
-    </p>
-    </details>
-     
+
+</p>
+</details>
+
+
+---
+
+
+### PUT  /table name 
+
+Update Existing Coloumn
+	
+#### Response
+
+<details><summary>Show example response</summary>
+<p>
+
+```json
+   {
+        "ShipperID": 2,
+        "CompanyName": "United Package",
+        "Phone": "(503) 555-3199"
+    }
+```
+
+</p>
+</details>
+
+
+---
 
 ### Delete /table name/{id}  
-
-Delete an existing column by ID
+Delete Existing Coloumn
+	
 #### Response
- <details><summary>Show example response</summary>
-  <p>
-   ```json
- {
+
+<details><summary>Show example response</summary>
+<p>
+
+```json
+  {
     "result": "success"
   }
-   ```
-    </p>
-    </details>
-    
+```
+
+</p>
+</details>
 
 # Project is created with:
 
