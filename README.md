@@ -30,7 +30,6 @@ A api for building REST Web Services in Go. Uses gorilla/mux as a router/dispatc
    <details><summary>Show example response</summary>
    <p>
    ```json
-   [
     {
         "ShipperID": 1,
         "CompanyName": "Speedy Express",
@@ -41,10 +40,11 @@ A api for building REST Web Services in Go. Uses gorilla/mux as a router/dispatc
         "CompanyName": "United Package",
         "Phone": "(503) 555-3199"
     }
-    ]
-    ```
+     ```
     </p>
     </details>
+    
+    ---
 
 ### Get  /table name/{id}  
 Returns a book by id
@@ -60,6 +60,8 @@ Returns a book by id
      ```
     </p>
     </details>
+    
+    ---
 
 ### POST /table name  
 Creates a new Column
@@ -75,7 +77,7 @@ Creates a new Column
      ```
     </p>
     </details>
-
+    ---
 ### PUT  /table name 
 Update existing Coloumn
 #### Response
@@ -90,6 +92,9 @@ Update existing Coloumn
      ```
     </p>
     </details>
+    
+    ---
+    
 
 ### Delete /table name/{id}  
 
@@ -104,6 +109,8 @@ Delete an existing column by ID
      ```
     </p>
     </details>
+    
+    ---
 
 # Project is created with:
 
