@@ -1,6 +1,7 @@
 # northwind_api
 
-Clone this repo
+A api for building REST Web Services in Go. Uses gorilla/mux as a router/dispatcher and CORS as a middleware handler. 
+
 
 # Install the dependencies with:
 
@@ -20,11 +21,86 @@ Clone this repo
 
 # API Reference
 
-- Get  /table name or any table u want to get. It will get all the data of the table requested.
-- Get  /table name/{id}  It will get all the data of the table by Id that is given.
-- POST /table name  will create a new column in the table.
-- PUT  /table name  will update the table. 
-- Delete /table name/{id}  Will delete the coloumn in  table by a given Id. 
+### Get  /table name 
+   Returns result identity
+ #### Response
+   <details><summary>Show example response</summary>
+   <p>
+   ```json
+   [
+    {
+        "ShipperID": 1,
+        "CompanyName": "Speedy Express",
+        "Phone": "(503) 555-9831"
+    },
+    {
+        "ShipperID": 2,
+        "CompanyName": "United Package",
+        "Phone": "(503) 555-3199"
+    }
+    ]
+    ````
+    </p>
+    </details>
+
+### Get  /table name/{id}  
+Returns a book by id
+#### Response
+   <details><summary>Show example response</summary>
+   <p>
+   ```json
+   {
+        "ShipperID": 2,
+        "CompanyName": "United Package",
+        "Phone": "(503) 555-3199"
+    }
+     ````
+    </p>
+    </details>
+
+### POST /table name  
+Creates a new Column
+#### Response
+   <details><summary>Show example response</summary>
+   <p>
+   ```json
+   {
+        "ShipperID": 3,
+        "CompanyName": "G2G",
+        "Phone": "(503) 555-3199"
+    }
+     ````
+    </p>
+    </details>
+
+### PUT  /table name 
+Update existing Coloumn
+#### Response
+ <details><summary>Show example response</summary>
+  <p>
+   ```json
+   {
+        "ShipperID": 3,
+        "CompanyName": "G2G",
+        "Phone": "0928 620999"
+    }
+     ````
+    </p>
+    </details>
+
+### Delete /table name/{id}  
+
+Delete an existing column by ID
+#### Response
+ <details><summary>Show example response</summary>
+  <p>
+   ```json
+ {
+    "result": "success"
+}
+     ````
+    </p>
+    </details>
 
 # Project is created with:
 
@@ -32,6 +108,9 @@ Clone this repo
 - gorilla/mux
 - joho/godotenv
 - MYSQL
+
+### How to run
+
 
 # To start 
 - Create a database in MySQL

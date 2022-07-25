@@ -5,6 +5,7 @@ import (
 	"golang-crud-rest-api/middleware"
 	"golang-crud-rest-api/querys"
 	types "golang-crud-rest-api/type"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 
@@ -18,7 +19,7 @@ func SetupRoutesForSupplier(router *mux.Router) {
 		count, _ := strconv.Atoi(r.FormValue("count"))
 		start, _ := strconv.Atoi(r.FormValue("start"))
 
-		if count > 10 || count < 1 {
+		if count >= 10 || count <= 1 {
 			count = 10
 		}
 		if start < 0 {
@@ -54,20 +55,20 @@ func SetupRoutesForSupplier(router *mux.Router) {
 
 	router.HandleFunc("/suppliers", func(w http.ResponseWriter, r *http.Request) {
 
-		var s types.Supplier
-		err := json.NewDecoder(r.Body).Decode(&s)
-
+		var supplier types.Supplier
+		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		} else {
-			err := querys.CreateSuppliers(s)
-			if err != nil {
-				middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
-
-			} else {
-				middleware.RespondWithJSON(w, http.StatusOK, true)
-			}
+			panic(err.Error())
 		}
+		json.Unmarshal([]byte(body), &supplier)
+
+		res, err := querys.CreateSuppliers(supplier)
+		if err != nil {
+
+			middleware.RespondWithError(w, http.StatusConflict, err.Error())
+			return
+		}
+		middleware.RespondWithJSON(w, http.StatusCreated, res)
 	}).Methods(http.MethodPost)
 
 	router.HandleFunc("/suppliers/{id}", func(w http.ResponseWriter, r *http.Request) {
@@ -82,7 +83,7 @@ func SetupRoutesForSupplier(router *mux.Router) {
 		if err != nil {
 			middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		} else {
-			middleware.RespondWithJSON(w, http.StatusOK, true)
+			middleware.RespondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 		}
 	}).Methods(http.MethodDelete)
 
@@ -96,7 +97,7 @@ func SetupRoutesForSupplier(router *mux.Router) {
 			if err != nil {
 				middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 			} else {
-				middleware.RespondWithJSON(w, http.StatusOK, true)
+				middleware.RespondWithJSON(w, http.StatusOK, s)
 			}
 		}
 	}).Methods(http.MethodPut)

@@ -1,12 +1,14 @@
 package querys
 
 import (
+	"fmt"
 	"golang-crud-rest-api/database"
 	types "golang-crud-rest-api/type"
 )
 
-func CreateOrders(o types.Orders) (err error) {
-	_, err = database.DB.Exec(`INSERT INTO orders 
+func CreateOrders(o types.Orders) (types.Orders, error) {
+	var order types.Orders
+	res, err := database.DB.Exec(`INSERT INTO orders 
 (CustomerID,
 EmployeeID,
 OrderDate,
@@ -15,7 +17,7 @@ ShippedDate,
 ShipVia,
 Freight,
 ShipName,
-ShipAddress,
+ShipAddress, 
 ShipCity,
 ShipRegion,
 ShipPostalCode,
@@ -33,17 +35,41 @@ ShipCountry)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
 		o.ShipRegion,
 		o.ShipPostalCode,
 		o.ShipCountry)
-	return err
 
+	if err != nil {
+		return order, err
+	}
+	rowID, err := res.LastInsertId()
+	if err != nil {
+		return order, err
+	}
+
+	order.OrderID = int64(rowID)
+
+	// find  by id
+	result, err := GetOrdersByID(order.OrderID)
+	if err != nil {
+		return order, err
+	}
+	return result, nil
 }
 
 func DeleteOrders(id int64) (err error) {
-	_, err = database.DB.Exec("DELETE FROM orders WHERE OrderID = ?", id)
+	r, err := database.DB.Exec("DELETE FROM orders WHERE OrderID = ?", id)
+	ar, e := r.RowsAffected()
+	var msg string
+	if e != nil {
+		msg = e.Error()
+	}
+	if ar == 0 {
+		msg += "The Id Entered does not exist"
+		err = fmt.Errorf(msg)
+	}
 	return err
 }
 
 func UpdateOrders(o types.Orders) (err error) {
-	_, err = database.DB.Exec(`UPDATE orders SET 
+	r, err := database.DB.Exec(`UPDATE orders SET 
 	CustomerID = ?,
 	EmployeeID =?,
 	OrderDate=?,
@@ -71,6 +97,20 @@ func UpdateOrders(o types.Orders) (err error) {
 		o.ShipPostalCode,
 		o.ShipCountry,
 		o.OrderID)
+
+	if err != nil {
+		return err
+	}
+
+	ar, e := r.RowsAffected()
+	var msg string
+	if e != nil {
+		msg = e.Error()
+	}
+	if ar == 0 {
+		msg += " Enter Valid Id to update"
+		err = fmt.Errorf(msg)
+	}
 	return err
 }
 

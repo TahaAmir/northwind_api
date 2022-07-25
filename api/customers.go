@@ -2,9 +2,11 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"golang-crud-rest-api/middleware"
 	"golang-crud-rest-api/querys"
 	types "golang-crud-rest-api/type"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 
@@ -53,21 +55,21 @@ func SetupRoutesForCustomers(router *mux.Router) {
 	}).Methods(http.MethodGet)
 
 	router.HandleFunc("/customers", func(w http.ResponseWriter, r *http.Request) {
-
-		var c types.Customers
-		err := json.NewDecoder(r.Body).Decode(&c)
-
+		var customer types.Customers
+		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		} else {
-			err := querys.CreateCustomer(c)
-			if err != nil {
-				middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
-
-			} else {
-				middleware.RespondWithJSON(w, http.StatusOK, true)
-			}
+			panic(err.Error())
 		}
+		json.Unmarshal([]byte(body), &customer)
+
+		res, err := querys.CreateCustomer(customer)
+		if err != nil {
+
+			middleware.RespondWithError(w, http.StatusConflict, err.Error())
+			return
+		}
+		fmt.Println(res)
+		middleware.RespondWithJSON(w, http.StatusCreated, res)
 	}).Methods(http.MethodPost)
 
 	router.HandleFunc("/customers/{id}", func(w http.ResponseWriter, r *http.Request) {
@@ -82,21 +84,23 @@ func SetupRoutesForCustomers(router *mux.Router) {
 		if err != nil {
 			middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		} else {
-			middleware.RespondWithJSON(w, http.StatusOK, true)
+			middleware.RespondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 		}
 	}).Methods(http.MethodDelete)
 
 	router.HandleFunc("/customers", func(w http.ResponseWriter, r *http.Request) {
+
 		var c types.Customers
 		err := json.NewDecoder(r.Body).Decode(&c)
+
 		if err != nil {
-			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid resquest payload")
+			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		} else {
 			err := querys.UpdateCustomer(c)
 			if err != nil {
 				middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 			} else {
-				middleware.RespondWithJSON(w, http.StatusOK, true)
+				middleware.RespondWithJSON(w, http.StatusOK, c)
 			}
 		}
 	}).Methods(http.MethodPut)

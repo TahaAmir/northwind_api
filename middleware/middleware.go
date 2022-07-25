@@ -30,8 +30,7 @@ func MiddlewareCors(next http.Handler) http.Handler {
 
 //To respond with error when therer is one
 func RespondWithError(w http.ResponseWriter, code int, message string) {
-	w.WriteHeader(http.StatusInternalServerError)
-	//json.NewEncoder(w).Encode(err.Error())
+
 	RespondWithJSON(w, code, map[string]string{"error": message})
 }
 

@@ -3,8 +3,9 @@ package api
 import (
 	"encoding/json"
 	"golang-crud-rest-api/middleware"
-	product_querys "golang-crud-rest-api/querys"
-	products "golang-crud-rest-api/type"
+	"golang-crud-rest-api/querys"
+	types "golang-crud-rest-api/type"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 
@@ -27,7 +28,7 @@ func SetupRoutesForProducts(router *mux.Router) {
 			start = 0
 		}
 
-		product, err := product_querys.GetProduct(start, count)
+		product, err := querys.GetProduct(start, count)
 		if err == nil {
 			middleware.RespondWithJSON(w, http.StatusOK, product)
 
@@ -46,10 +47,11 @@ func SetupRoutesForProducts(router *mux.Router) {
 			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid Product ID")
 			return
 		}
-		product, err := product_querys.GetProductById(id)
+		product, err := querys.GetProductById(id)
 
 		if err != nil {
 			middleware.RespondWithError(w, http.StatusNotFound, "Product not found")
+			return
 		} else {
 			middleware.RespondWithJSON(w, http.StatusOK, product)
 		}
@@ -59,33 +61,35 @@ func SetupRoutesForProducts(router *mux.Router) {
 	//To Create
 	router.HandleFunc("/product", func(w http.ResponseWriter, r *http.Request) {
 
-		var product products.Product
-		err := json.NewDecoder(r.Body).Decode(&product)
+		var product types.Product
+		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		} else {
-			err := product_querys.CreateProduct(product)
-			if err != nil {
-				middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
-			} else {
-				middleware.RespondWithJSON(w, http.StatusOK, true)
-			}
+			panic(err.Error())
 		}
+		json.Unmarshal([]byte(body), &product)
+
+		res, err := querys.CreateProduct(product)
+		if err != nil {
+
+			middleware.RespondWithError(w, http.StatusConflict, err.Error())
+			return
+		}
+		middleware.RespondWithJSON(w, http.StatusCreated, res)
 	}).Methods(http.MethodPost)
 
 	//TO Update
 	router.HandleFunc("/product", func(w http.ResponseWriter, r *http.Request) {
 
-		var product products.Product
+		var product types.Product
 		err := json.NewDecoder(r.Body).Decode(&product)
 		if err != nil {
 			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		} else {
-			err := product_querys.UpdateProduct(product)
+			err := querys.UpdateProduct(product)
 			if err != nil {
 				middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 			} else {
-				middleware.RespondWithJSON(w, http.StatusOK, true)
+				middleware.RespondWithJSON(w, http.StatusOK, product)
 			}
 		}
 	}).Methods(http.MethodPut)
@@ -99,12 +103,12 @@ func SetupRoutesForProducts(router *mux.Router) {
 			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid Product ID")
 			return
 		}
-		err = product_querys.DeleteProduct(id)
+		err = querys.DeleteProduct(id)
 
 		if err != nil {
 			middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		} else {
-			middleware.RespondWithJSON(w, http.StatusOK, true)
+			middleware.RespondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 		}
 
 	}).Methods(http.MethodDelete)

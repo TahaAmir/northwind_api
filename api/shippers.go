@@ -6,6 +6,7 @@ import (
 	"golang-crud-rest-api/middleware"
 	"golang-crud-rest-api/querys"
 	types "golang-crud-rest-api/type"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -44,20 +45,21 @@ func SetupRoutesForShippers(router *mux.Router) {
 	}).Methods(http.MethodGet)
 
 	router.HandleFunc("/shippers", func(w http.ResponseWriter, r *http.Request) {
-		// Declare a var so we can decode json into it
-		var s types.Shippers
-		err := json.NewDecoder(r.Body).Decode(&s)
-		fmt.Println(s)
+
+		var shipper types.Shippers
+		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			middleware.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		} else {
-			err := querys.CreateShippers(s)
-			if err != nil {
-				middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
-			} else {
-				middleware.RespondWithJSON(w, http.StatusOK, true)
-			}
+			panic(err.Error())
 		}
+		json.Unmarshal([]byte(body), &shipper)
+
+		res, err := querys.CreateShippers(shipper)
+		if err != nil {
+
+			middleware.RespondWithError(w, http.StatusConflict, err.Error())
+			return
+		}
+		middleware.RespondWithJSON(w, http.StatusCreated, res)
 	}).Methods(http.MethodPost)
 
 	router.HandleFunc("/shippers/{id}", func(w http.ResponseWriter, r *http.Request) {
@@ -73,7 +75,7 @@ func SetupRoutesForShippers(router *mux.Router) {
 		if err != nil {
 			middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		} else {
-			middleware.RespondWithJSON(w, http.StatusOK, true)
+			middleware.RespondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 		}
 	}).Methods(http.MethodDelete)
 
@@ -88,7 +90,7 @@ func SetupRoutesForShippers(router *mux.Router) {
 			if err != nil {
 				middleware.RespondWithError(w, http.StatusInternalServerError, err.Error())
 			} else {
-				middleware.RespondWithJSON(w, http.StatusOK, true)
+				middleware.RespondWithJSON(w, http.StatusOK, c)
 			}
 		}
 	}).Methods(http.MethodPut)

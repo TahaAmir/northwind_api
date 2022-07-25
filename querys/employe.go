@@ -1,12 +1,14 @@
 package querys
 
 import (
+	"fmt"
 	"golang-crud-rest-api/database"
 	types "golang-crud-rest-api/type"
 )
 
-func CreateEmployee(e types.Employee) (err error) {
-	_, err = database.DB.Exec(`INSERT INTO employees 
+func CreateEmployee(e types.Employee) (types.Employee, error) {
+	var employee types.Employee
+	res, err := database.DB.Exec(`INSERT INTO employees 
    ( LastName
 	,FirstName
 	,Title
@@ -20,9 +22,8 @@ func CreateEmployee(e types.Employee) (err error) {
 	,Country
 	,HomePhone
 	,Extension
-	,Photo
 	,Notes
-	,ReportsTo ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+	,ReportsTo ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
 		e.LastName,
 		e.FirstName,
 		e.Title,
@@ -36,21 +37,47 @@ func CreateEmployee(e types.Employee) (err error) {
 		e.Country,
 		e.HomePhone,
 		e.Extension,
-		e.Photo,
 		e.Notes,
 		e.ReportsTo)
-	return
+	if err != nil {
+		return employee, err
+	}
+
+	rowID, err := res.LastInsertId()
+	if err != nil {
+		return employee, err
+	}
+
+	employee.EmployeeID = int64(rowID)
+
+	// find user by id
+	result, err := GetEmployeeByID(int64(employee.EmployeeID))
+	if err != nil {
+		return employee, err
+	}
+
+	return result, nil
 }
 
 func DeleteEmployee(id int64) (err error) {
-	_, err = database.DB.Exec("DELETE FROM employees WHERE EmployeeID = ?", id)
+	r, err := database.DB.Exec("DELETE FROM employees WHERE EmployeeID = ?", id)
 
-	return
+	ar, e := r.RowsAffected()
+	var msg string
+	if e != nil {
+		msg = e.Error()
+	}
+	if ar == 0 {
+		msg += "The Id Entered does not exist"
+		err = fmt.Errorf(msg)
+	}
+	return err
+
 }
 
 func UpdateEmployee(e types.Employee) (err error) {
 
-	_, err = database.DB.Exec(`UPDATE employees SET 
+	r, err := database.DB.Exec(`UPDATE employees SET 
      LastName =?
 	,FirstName=?
 	,Title=?
@@ -64,7 +91,6 @@ func UpdateEmployee(e types.Employee) (err error) {
 	,Country=?
 	,HomePhone=?
 	,Extension=?
-	,Photo=?
 	,Notes=?
 	,ReportsTo=?
 	WHERE EmployeeID=?`,
@@ -81,12 +107,21 @@ func UpdateEmployee(e types.Employee) (err error) {
 		e.Country,
 		e.HomePhone,
 		e.Extension,
-		e.Photo,
 		e.Notes,
 		e.ReportsTo,
 		e.EmployeeID)
 
-	return
+	ar, er := r.RowsAffected()
+	var msg string
+	if er != nil {
+		msg = er.Error()
+	}
+	if ar == 0 {
+		msg += "The Id Entered does not exist"
+		err = fmt.Errorf(msg)
+	}
+	return err
+
 }
 
 func GetEmployee(start, count int) ([]types.Employee, error) {
@@ -110,7 +145,6 @@ func GetEmployee(start, count int) ([]types.Employee, error) {
 	,Country
 	,HomePhone
 	,Extension
-	,Photo
 	,Notes
 	,ReportsTo FROM employees  LIMIT ? OFFSET ?
 	`, count, start)
@@ -134,7 +168,6 @@ func GetEmployee(start, count int) ([]types.Employee, error) {
 			&e.Country,
 			&e.HomePhone,
 			&e.Extension,
-			&e.Photo,
 			&e.Notes,
 			&e.ReportsTo)
 		if err != nil {
@@ -165,7 +198,6 @@ func GetEmployeeByID(id int64) (types.Employee, error) {
    ,Country
    ,HomePhone
    ,Extension
-   ,Photo
    ,Notes
    ,ReportsTo FROM employees WHERE EmployeeID=?`, id)
 
@@ -184,7 +216,6 @@ func GetEmployeeByID(id int64) (types.Employee, error) {
 		&e.Country,
 		&e.HomePhone,
 		&e.Extension,
-		&e.Photo,
 		&e.Notes,
 		&e.ReportsTo)
 	if err != nil {

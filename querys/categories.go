@@ -1,24 +1,64 @@
 package querys
 
 import (
+	"fmt"
 	"golang-crud-rest-api/database"
 	types "golang-crud-rest-api/type"
 )
 
-func CreateCatogorry(c types.Catogories) error {
+func CreateCatogorry(c types.Catogories) (types.Catogories, error) {
+	var category types.Catogories
+	res, err := database.DB.Exec("INSERT INTO categories (CategoryName,Description,Picture) VALUES (?,?,?)",
+		c.Name, c.Description, c.Picture)
 
-	_, err := database.DB.Exec("INSERT INTO categories (CategoryName,Description,Picture) VALUES (?,?,?) ", c.Name, c.Description, c.Picture)
-	return err
+	if err != nil {
+		return category, err
+	}
+
+	rowID, err := res.LastInsertId()
+	if err != nil {
+		return category, err
+	}
+
+	category.ID = int64(rowID)
+
+	// find user by id
+	result, err := GetCategoryById(int64(category.ID))
+	if err != nil {
+		return category, err
+	}
+
+	return result, nil
+
 }
 
 func DeleteCatogory(id int64) error {
-	_, err := database.DB.Exec("DELETE FROM categories WHERE CategoryID =?", id)
+	r, err := database.DB.Exec("DELETE FROM categories WHERE CategoryID =?", id)
+	ar, e := r.RowsAffected()
+	var msg string
+	if e != nil {
+		msg = e.Error()
+	}
+	if ar == 0 {
+		msg += "The Id Entered does not exist"
+		err = fmt.Errorf(msg)
+	}
 	return err
 }
 
 func UpdateCategory(c types.Catogories) error {
-	_, err := database.DB.Exec(" UPDATE categories SET CategoryName= ?, Description=?,Picture=? WHERE CategoryID=?", c.Name, c.Description, c.Picture, c.ID)
+	r, err := database.DB.Exec(" UPDATE categories SET CategoryName= ?, Description=?,Picture=? WHERE CategoryID=?", c.Name, c.Description, c.Picture, c.ID)
+	ar, e := r.RowsAffected()
+	var msg string
+	if e != nil {
+		msg = e.Error()
+	}
+	if ar == 0 {
+		msg += "The Id Entered to update does not exist"
+		err = fmt.Errorf(msg)
+	}
 	return err
+
 }
 
 func GetCategory() ([]types.Catogories, error) {

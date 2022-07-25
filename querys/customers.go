@@ -1,13 +1,14 @@
 package querys
 
 import (
+	"fmt"
 	"golang-crud-rest-api/database"
 	types "golang-crud-rest-api/type"
 )
 
-func CreateCustomer(c types.Customers) error {
-
-	_, err := database.DB.Exec(`INSERT INTO customers 
+func CreateCustomer(c types.Customers) (types.Customers, error) {
+	var customer types.Customers
+	res, err := database.DB.Exec(`INSERT INTO customers 
 	(CompanyName,
 	ContactName,
 	ContactTitle,
@@ -20,7 +21,7 @@ func CreateCustomer(c types.Customers) error {
 	Fax,
 	Image, 
 	ImageThumbnail) 
-	VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
+	VALUES (?,?,?,?,?,?,?,?,?,?,?,?) `,
 		c.CompanyName,
 		c.ContactName,
 		c.ContactTitle,
@@ -33,18 +34,46 @@ func CreateCustomer(c types.Customers) error {
 		c.Fax,
 		c.Image,
 		c.ImageThumbnail)
-	return err
+
+	if err != nil {
+		return customer, err
+	}
+	rowID, err := res.LastInsertId()
+	if err != nil {
+		return customer, err
+	}
+
+	customer.ID = int64(rowID)
+
+	// find  by id
+	result, err := GetCustomerById(customer.ID)
+	if err != nil {
+		return customer, err
+	}
+
+	return result, nil
 }
 
 func DeleteCustomer(id int64) error {
 
-	_, err := database.DB.Exec("DELETE FROM customers where CustomerID=?", id)
+	r, err := database.DB.Exec("DELETE FROM customers where CustomerID=?", id)
+
+	ar, e := r.RowsAffected()
+	var msg string
+	if e != nil {
+		msg = e.Error()
+	}
+	if ar == 0 {
+		msg += "The Id Entered does not exist"
+		err = fmt.Errorf(msg)
+	}
+
 	return err
 }
 
 func UpdateCustomer(c types.Customers) error {
 
-	_, err := database.DB.Exec(`UPDATE customers SET 
+	r, err := database.DB.Exec(`UPDATE customers SET 
 	CompanyName =?,
 	ContactName=?,
 	ContactTitle=?,
@@ -70,6 +99,19 @@ func UpdateCustomer(c types.Customers) error {
 		c.Image,
 		c.ImageThumbnail,
 		c.ID)
+	if err != nil {
+		return err
+	}
+
+	ar, e := r.RowsAffected()
+	var msg string
+	if e != nil {
+		msg = e.Error()
+	}
+	if ar == 0 {
+		msg += " Enter Valid Id to update"
+		err = fmt.Errorf(msg)
+	}
 	return err
 }
 

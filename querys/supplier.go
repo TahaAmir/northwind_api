@@ -1,13 +1,14 @@
 package querys
 
 import (
+	"fmt"
 	"golang-crud-rest-api/database"
 	types "golang-crud-rest-api/type"
 )
 
-func CreateSuppliers(s types.Supplier) (err error) {
-
-	_, err = database.DB.Exec(`INSERT INTO suppliers  
+func CreateSuppliers(s types.Supplier) (types.Supplier, error) {
+	var suupplier types.Supplier
+	res, err := database.DB.Exec(`INSERT INTO suppliers  
   ( CompanyName,
 	ContactName,
 	ContactTitle,
@@ -31,18 +32,42 @@ func CreateSuppliers(s types.Supplier) (err error) {
 		s.Fax,
 		s.HomePage)
 
-	return err
+	if err != nil {
+		return suupplier, err
+	}
+	rowID, err := res.LastInsertId()
+	if err != nil {
+		return suupplier, err
+	}
+
+	suupplier.SupplierID = int64(rowID)
+
+	// find  by id
+	result, err := GetSupplierByID(suupplier.SupplierID)
+	if err != nil {
+		return suupplier, err
+	}
+	return result, nil
 }
 
 func DeleteSupplier(id int64) (err error) {
 
-	_, err = database.DB.Exec("DELETE  FROM suppliers WHERE SupplierID = ? ", id)
+	r, err := database.DB.Exec("DELETE  FROM suppliers WHERE SupplierID = ? ", id)
+	ar, e := r.RowsAffected()
+	var msg string
+	if e != nil {
+		msg = e.Error()
+	}
+	if ar == 0 {
+		msg += "The Id Entered does not exist"
+		err = fmt.Errorf(msg)
+	}
 	return err
 }
 
 func UpdateSuppliers(s types.Supplier) (err error) {
 
-	_, err = database.DB.Exec(`UPDATE suppliers SET 
+	r, err := database.DB.Exec(`UPDATE suppliers SET 
 	CompanyName = ?,
 	ContactName  = ?,
 	ContactTitle = ?,
@@ -66,6 +91,20 @@ func UpdateSuppliers(s types.Supplier) (err error) {
 		s.Fax,
 		s.HomePage,
 		s.SupplierID)
+
+	if err != nil {
+		return err
+	}
+
+	ar, e := r.RowsAffected()
+	var msg string
+	if e != nil {
+		msg = e.Error()
+	}
+	if ar == 0 {
+		msg += " Enter Valid Id to update"
+		err = fmt.Errorf(msg)
+	}
 	return err
 }
 
