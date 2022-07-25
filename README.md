@@ -1,11 +1,8 @@
 # northwind_api
 
-<<<<<<< HEAD
 A api for building REST Web Services in Go. Uses gorilla/mux as a router/dispatcher and CORS as a middleware handler. 
 
-=======
-- Clone this repo
->>>>>>> ea3d26791daa6186a6a949a660f38c6ec22302f7
+
 
 # Install the dependencies with:
 
@@ -45,7 +42,7 @@ A api for building REST Web Services in Go. Uses gorilla/mux as a router/dispatc
         "Phone": "(503) 555-3199"
     }
     ]
-    ````
+    ```
     </p>
     </details>
 
@@ -60,7 +57,7 @@ Returns a book by id
         "CompanyName": "United Package",
         "Phone": "(503) 555-3199"
     }
-     ````
+     ```
     </p>
     </details>
 
@@ -75,7 +72,7 @@ Creates a new Column
         "CompanyName": "G2G",
         "Phone": "(503) 555-3199"
     }
-     ````
+     ```
     </p>
     </details>
 
@@ -90,7 +87,7 @@ Update existing Coloumn
         "CompanyName": "G2G",
         "Phone": "0928 620999"
     }
-     ````
+     ```
     </p>
     </details>
 
@@ -104,7 +101,7 @@ Delete an existing column by ID
  {
     "result": "success"
 }
-     ````
+     ```
     </p>
     </details>
 
