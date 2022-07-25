@@ -29,7 +29,9 @@ A api for building REST Web Services in Go. Uses gorilla/mux as a router/dispatc
  #### Response
    <details><summary>Show example response</summary>
    <p>
-   ```json
+```json
+  {
+  "data": [
     {
         "ShipperID": 1,
         "CompanyName": "Speedy Express",
@@ -40,41 +42,47 @@ A api for building REST Web Services in Go. Uses gorilla/mux as a router/dispatc
         "CompanyName": "United Package",
         "Phone": "(503) 555-3199"
     }
-     ```
-    </p>
-    </details>
-    
-    ---
+  ]
+}
+```
 
 ### Get  /table name/{id}  
 Returns a book by id
 #### Response
    <details><summary>Show example response</summary>
    <p>
-   ```json
-   {
-        "ShipperID": 2,
-        "CompanyName": "United Package",
-        "Phone": "(503) 555-3199"
+  ```json
+  {
+  "data": [
+    {
+        "ShipperID": 1,
+        "CompanyName": "Speedy Express",
+        "Phone": "(503) 555-9831"
     }
-     ```
+   
+  ]
+}
+```
     </p>
     </details>
     
-    ---
 
 ### POST /table name  
 Creates a new Column
 #### Response
    <details><summary>Show example response</summary>
    <p>
-   ```json
-   {
-        "ShipperID": 3,
-        "CompanyName": "G2G",
-        "Phone": "(503) 555-3199"
+ ```json
+  {
+  "data": [
+    {
+        "ShipperID": 1,
+        "CompanyName": "Speedy Express",
+        "Phone": "(503) 555-9831"
     }
-     ```
+  ]
+}
+```
     </p>
     </details>
     ---
@@ -84,17 +92,19 @@ Update existing Coloumn
  <details><summary>Show example response</summary>
   <p>
    ```json
-   {
-        "ShipperID": 3,
-        "CompanyName": "G2G",
-        "Phone": "0928 620999"
+  {
+  "data": [
+    {
+        "ShipperID": 2,
+        "CompanyName": "United Package",
+        "Phone": "(503) 555-3199"
     }
-     ```
+  ]
+}
+```
     </p>
     </details>
-    
-    ---
-    
+     
 
 ### Delete /table name/{id}  
 
@@ -105,8 +115,8 @@ Delete an existing column by ID
    ```json
  {
     "result": "success"
-}
-     ```
+  }
+   ```
     </p>
     </details>
     
